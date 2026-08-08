@@ -1,7 +1,7 @@
 const business = {
   phoneDisplay: "+91 94526 56025",
   phoneHref: "tel:+919452656025",
-  whatsappHref: "https://wa.me/919452656025",
+  whatsappHref: "https://wa.me/919839602777",
   emailDisplay: "pankajphotocolour@gmail.com",
   emailHref: "mailto:pankajphotocolour@gmail.com",
   whatsappMessage:
