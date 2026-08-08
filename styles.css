@@ -51,6 +51,12 @@ img {
 a {
   color: inherit;
   text-decoration: none;
+  touch-action: manipulation;
+}
+
+button {
+  touch-action: manipulation;
+  cursor: pointer;
 }
 
 :focus-visible {
@@ -89,13 +95,14 @@ a {
 .site-header.is-scrolled {
   background: rgba(251, 247, 240, 0.9);
   box-shadow: 0 1px 0 rgba(23, 19, 15, 0.08);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(12px);
+  will-change: background, box-shadow;
 }
 
 .site-header:has(.nav-panel.is-open) {
   background: rgba(251, 247, 240, 0.96);
   box-shadow: 0 1px 0 rgba(23, 19, 15, 0.08);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(12px);
 }
 
 .nav {
@@ -128,6 +135,7 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .brand-logo {
@@ -174,6 +182,12 @@ a {
 .nav-panel a {
   position: relative;
   padding-block: 6px;
+  padding-inline: 8px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition: background 200ms ease;
 }
 
 .nav-panel a::after {
@@ -195,12 +209,14 @@ a {
 
 .nav-toggle {
   display: none;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
+  padding: 6px;
   border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: 50%;
   background: transparent;
   color: var(--color-white);
+  flex-shrink: 0;
 }
 
 .nav-toggle span {
@@ -209,6 +225,7 @@ a {
   height: 1px;
   margin: 5px auto;
   background: currentColor;
+  transition: all 200ms ease;
 }
 
 .section {
@@ -319,13 +336,16 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 13px 20px;
+  min-height: 56px;
+  min-width: 56px;
+  padding: 14px 22px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font-weight: 800;
   line-height: 1.1;
+  font-size: inherit;
   transition: transform 220ms var(--ease), background 220ms ease, color 220ms ease, border-color 220ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:hover {
@@ -367,7 +387,7 @@ h3 {
 .hero-proof div {
   padding: 18px;
   background: rgba(23, 19, 15, 0.42);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .hero-proof dt {
@@ -473,6 +493,11 @@ h3 {
   padding: clamp(20px, 2.6vw, 30px);
   display: flex;
   flex-direction: column;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.service-card:active {
+  transform: scale(0.98);
 }
 
 .service-card span {
@@ -502,6 +527,8 @@ h3 {
   color: var(--color-green);
   font-weight: 850;
   border-bottom: 1px solid currentColor;
+  min-height: 44px;
+  align-items: center;
 }
 
 .portfolio-mosaic {
@@ -594,6 +621,17 @@ h3 {
 .faq-list summary {
   cursor: pointer;
   font-weight: 850;
+  padding: 8px;
+  margin: -8px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition: background 200ms ease;
+}
+
+.faq-list summary:hover {
+  background: rgba(24, 59, 50, 0.05);
 }
 
 .faq-list p {
@@ -624,6 +662,9 @@ h3 {
 .contact-card a {
   color: var(--color-green);
   font-weight: 800;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .floating-whatsapp {
@@ -634,19 +675,25 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 13px 18px;
+  min-height: 56px;
+  min-width: 56px;
+  padding: 14px 20px;
   border-radius: 999px;
   color: var(--color-white);
   background: #1f7a4d;
   box-shadow: 0 14px 34px rgba(31, 122, 77, 0.34);
   font-weight: 850;
   transition: transform 220ms var(--ease), box-shadow 220ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .floating-whatsapp:hover {
   transform: translateY(-2px);
   box-shadow: 0 18px 44px rgba(31, 122, 77, 0.38);
+}
+
+.floating-whatsapp:active {
+  transform: translateY(0);
 }
 
 .site-footer {
@@ -666,9 +713,18 @@ h3 {
   margin: 0;
 }
 
+.footer-grid a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
 @media (max-width: 980px) {
   .nav-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .site-header .nav-toggle {
@@ -705,13 +761,14 @@ h3 {
   }
 
   .nav-panel a {
-    padding: 13px 12px;
+    padding: 14px 14px;
     border-radius: var(--radius-sm);
+    margin: 4px 0;
   }
 
   .nav-panel a:hover,
   .nav-panel a.is-active {
-    background: rgba(24, 59, 50, 0.07);
+    background: rgba(24, 59, 50, 0.1);
   }
 
   .split-grid,
@@ -756,6 +813,15 @@ h3 {
     inset: 70px 12px auto;
   }
 
+  .nav-panel a {
+    min-height: 48px;
+  }
+
+  .nav-toggle {
+    width: 48px;
+    height: 48px;
+  }
+
   .hero {
     min-height: 96svh;
     padding-block: 112px 32px;
@@ -778,6 +844,11 @@ h3 {
   .cta-row,
   .contact-actions {
     display: grid;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 50px;
   }
 
   .hero-proof,
@@ -803,8 +874,9 @@ h3 {
   .floating-whatsapp {
     right: 12px;
     bottom: 12px;
-    min-height: 44px;
-    padding: 11px 14px;
+    min-height: 50px;
+    min-width: 50px;
+    padding: 12px 16px;
     font-size: 0.9rem;
   }
 
@@ -815,6 +887,48 @@ h3 {
   .footer-grid {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-grid a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --shell: 100vw;
+  }
+
+  .shell {
+    padding-inline: 16px;
+  }
+
+  .cta-row,
+  .contact-actions {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 16vw, 4rem);
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 10vw, 3rem);
+  }
+
+  .hero-proof {
+    grid-template-columns: 1fr;
+  }
+
+  .floating-whatsapp {
+    padding: 10px 14px;
+    font-size: 0.85rem;
   }
 }
 
