@@ -1,3 +1,8 @@
+/* Updated to improve mobile responsiveness and prevent header/brand clipping
+   - Added safe-area-inset support for notch devices and adjusted scroll-padding-top
+   - Allowed brand to shrink on small screens to avoid being clipped by nav
+   - Added ellipsis behavior for brand name at narrow widths
+*/
 :root {
   --color-ink: #17130f;
   --color-ink-soft: #3a332c;
@@ -26,7 +31,8 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 86px;
+  /* account for safe-area inset on devices with notches */
+  scroll-padding-top: calc(86px + env(safe-area-inset-top, 0px));
 }
 
 body {
@@ -90,6 +96,8 @@ button {
   z-index: 50;
   inset: 0 0 auto;
   transition: background 260ms ease, box-shadow 260ms ease, backdrop-filter 260ms ease;
+  /* ensure header content is pushed below device notch */
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .site-header.is-scrolled {
@@ -117,7 +125,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-width: max-content;
+  /* allow the brand to shrink on narrow viewports instead of forcing overflow */
+  min-width: 0;
   color: var(--color-white);
 }
 
@@ -162,6 +171,7 @@ button {
   font-family: var(--font-display);
   font-size: clamp(1.02rem, 2vw, 1.28rem);
   line-height: 1.05;
+  /* allow wrapping on wide screens, but prevent overflow when space is limited */
 }
 
 .brand small {
@@ -784,6 +794,11 @@ h3 {
   .testimonial-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /* make brand shrink gracefully on narrower viewports */
+  .brand {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 680px) {
@@ -793,7 +808,7 @@ h3 {
   }
 
   html {
-    scroll-padding-top: 72px;
+    scroll-padding-top: calc(72px + env(safe-area-inset-top, 0px));
   }
 
   .nav {
@@ -807,6 +822,14 @@ h3 {
 
   .brand small {
     display: none;
+  }
+
+  /* add ellipsis and constrain brand name width so it doesn't push out of the header */
+  .brand strong {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 124px); /* leaves room for logo and toggle */
   }
 
   .nav-panel {
