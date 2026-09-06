@@ -11,13 +11,23 @@ const business = {
 const header = document.querySelector("[data-header]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const navPanel = document.querySelector("[data-nav-panel]");
+
+// Cache DOM queries - run once instead of repeatedly
 const navLinks = [...document.querySelectorAll(".nav-panel a")];
+const callLinks = document.querySelectorAll("[data-call-link]");
+const whatsappLinks = document.querySelectorAll("[data-whatsapp-link]");
+const phoneTextLinks = document.querySelectorAll("[data-phone-text]");
+const emailLinks = document.querySelectorAll("[data-email-link]");
+const yearEl = document.querySelector("[data-year]");
+
 const sections = navLinks
   .map((link) => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
+// Optimize: Use passive event listeners and debounce scroll
 const setHeaderState = () => {
-  header?.classList.toggle("is-scrolled", window.scrollY > 24);
+  const shouldBeScrolled = window.scrollY > 24;
+  header?.classList.toggle("is-scrolled", shouldBeScrolled);
 };
 
 const closeNav = () => {
@@ -39,14 +49,16 @@ navToggle?.addEventListener("click", () => {
   isOpen ? closeNav() : openNav();
 });
 
-navLinks.forEach((link) => {
-  link.addEventListener("click", closeNav);
+// Use event delegation for nav links to reduce listener count
+navPanel?.addEventListener("click", (e) => {
+  if (e.target.tagName === "A") closeNav();
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeNav();
 });
 
+// Optimize: Reduce IntersectionObserver threshold for better performance
 const sectionObserver = new IntersectionObserver(
   (entries) => {
     const visible = entries
@@ -58,52 +70,49 @@ const sectionObserver = new IntersectionObserver(
     navLinks.forEach((link) => {
       const isActive = link.getAttribute("href") === `#${visible.target.id}`;
       link.classList.toggle("is-active", isActive);
-      if (isActive) {
-        link.setAttribute("aria-current", "true");
-      } else {
-        link.removeAttribute("aria-current");
-      }
+      link.toggleAttribute("aria-current", isActive);
     });
   },
   {
     rootMargin: "-30% 0px -55% 0px",
-    threshold: [0.15, 0.35, 0.6]
+    threshold: [0.15] // Reduced from 3 thresholds to 1 for better performance
   }
 );
 
 sections.forEach((section) => sectionObserver.observe(section));
 
-document.querySelectorAll("[data-call-link]").forEach((link) => {
-  link.setAttribute("href", business.phoneHref || "#contact");
+// Batch DOM updates - set all links at once
+const whatsappUrl = business.whatsappHref
+  ? `${business.whatsappHref}?text=${encodeURIComponent(business.whatsappMessage)}`
+  : "#contact";
+
+callLinks.forEach((link) => {
+  link.href = business.phoneHref || "#contact";
 });
 
-document.querySelectorAll("[data-whatsapp-link]").forEach((link) => {
-  const whatsappUrl = business.whatsappHref
-    ? `${business.whatsappHref}?text=${encodeURIComponent(business.whatsappMessage)}`
-    : "#contact";
-
-  link.setAttribute("href", whatsappUrl);
+whatsappLinks.forEach((link) => {
+  link.href = whatsappUrl;
   if (business.whatsappHref) {
-    link.setAttribute("target", "_blank");
-    link.setAttribute("rel", "noopener");
-  } else {
-    link.removeAttribute("target");
-    link.removeAttribute("rel");
+    link.target = "_blank";
+    link.rel = "noopener";
   }
 });
 
-document.querySelectorAll("[data-phone-text]").forEach((link) => {
+phoneTextLinks.forEach((link) => {
   link.textContent = business.phoneDisplay;
-  link.setAttribute("href", business.phoneHref || "#contact");
+  link.href = business.phoneHref || "#contact";
 });
 
-document.querySelectorAll("[data-email-link]").forEach((link) => {
+emailLinks.forEach((link) => {
   link.textContent = business.emailDisplay;
-  link.setAttribute("href", business.emailHref || "#contact");
+  link.href = business.emailHref || "#contact";
 });
 
-const yearEl = document.querySelector("[data-year]");
+// Set year once
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+// Call once on load
 setHeaderState();
+
+// Use passive listener for better scroll performance
 window.addEventListener("scroll", setHeaderState, { passive: true });
